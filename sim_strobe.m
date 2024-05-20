@@ -7,7 +7,7 @@ defvar('relo',    false   ); % orelative onset time with Gamma jitter? Else (def
 defvar('ondur',  'hcycle' ); % cycle "on" duration: 'hcycle' (default = half-cycle), of length (ms)
 defvar('dsig',   'fixed'  ); % on-duration: 'fixed', or jitter std. dev (ms)
 defvar('fs',      2000    ); % sampling frequency (Hz)
-defvar('dfac',    5       ); % spectral power display frequency cutoff factorfrequency
+defvar('dfac',    5       ); % spectral power display frequency cutoff factor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -18,8 +18,8 @@ defvar('dfac',    5       ); % spectral power display frequency cutoff factorfre
 % duration of a cycle; by default, ondur is set to half a cycle (cycle length is 1/F).
 %
 % The function gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig) generates an aperiodic
-% square-wave signal with average frequency F over a time segment of length T, See
-% gen_strobe_periodic.m for a detailed description of the parameters
+% square-wave signal with average frequency F over a time segment of length T. See
+% gen_strobe_periodic.m for a detailed description of the parameters.
 %
 % The function sample_strobe(signal,fs,T) samples the signal at frequency fs, over
 % a time segment of length T.
@@ -29,7 +29,7 @@ defvar('dfac',    5       ); % spectral power display frequency cutoff factorfre
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-T = ceil(T*fs)/fs; % ensure T is an *integer* number of samples
+T = ceil(T*fs)/fs; % adjust T (if necessary) to ensure an *integer* number of samples
 
 % Create a regular periodic strobe process
 
@@ -52,7 +52,7 @@ fprintf('\nEffective frequency = %g Hz\n\n',Fe);
 % Plot signals and power spectra
 
 figure(1); clf
-sgtitle(sprintf('\nAperiodic: mean strobe frequency = %gHz (effective frequency = %gHz)\n\n%s\n',F,Fe,sdescrip),'FontSize',14);
+sgtitle(sprintf('\nAperiodic: %s\n',sdescrip),'FontSize',14);
 
 subplot(3,1,1);
 plot(ts,samples_p);

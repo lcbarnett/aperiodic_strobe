@@ -14,7 +14,7 @@ ndt1 = ndt+1;
 assert(all(signal(:,1) >= 0),'On times must be nonnegative');
 assert(all(signal(:,2) >  0),'Durations must be positive'  );
 
-ts = (0:ndt)'/fs;         % sample time stamps
+ts = (0:ndt)'/fs;        % sample time stamps
 samples = zeros(ndt1,1); % time series (binary)
 
 % Quantise to sample frequency

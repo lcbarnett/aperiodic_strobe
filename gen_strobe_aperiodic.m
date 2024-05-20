@@ -44,10 +44,10 @@ Te = T-mu; % latest possible cycle onset time
 
 if strcmpi(ondur,'hcycle')
 	ondur = 1/(2*F);
-	sondur = sprintf('half-cycle (%g ms)',1000*ondur);
+	shcycle = 'half-cycle, ';
 elseif isnumeric(ondur) && isscalar(ondur) && ondur > eps
-	sondur = sprintf('%g ms',ondur);
 	ondur = ondur/1000; % convert from ms to secs
+	shcycle = '';
 else
 	error('Bad mean on-duration specification');
 end
@@ -56,28 +56,28 @@ end
 
 if     strcmpi(osig,'periodic')
 	omode = 1;
-	sosig = 'periodic';
+	sosig = sprintf('periodic (\\mu = %g ms)',1000*mu);
 elseif strcmpi(osig,'Poisson')
 	omode = 2;
-	sosig = 'Poisson';
+	sosig = sprintf('Poisson (\\mu = %g ms)',1000*mu);
 elseif isnumeric(osig) && isscalar(osig)
 	if isinf(osig)
 		omode = 2;
-		sosig = 'Poisson';
+		sosig = sprintf('Poisson (\\mu = %g ms)',1000*mu);
 	elseif osig > eps
 		omode  = 3; % Gamma/Gaussian jitter
 		if relo
-			sosig  = sprintf('relative with \\Gamma jitter (\\sigma = %g ms)',osig);
+			sosig  = sprintf('relative, \\Gamma(\\mu = %g ms, \\sigma = %g ms)',1000*mu,osig);
 			osig   = osig/1000; % convert from ms to secs
 			ovar   = osig^2;
 			oalpha = (mu^2)/ovar;
 			obeta  = ovar/mu;
 		else
-			sosig  = sprintf('periodic with Gaussian jitter (\\sigma = %g ms)',osig);
+			sosig  = sprintf('periodic, N(\\mu = %g ms, \\sigma = %g ms)',1000*mu,osig);
 		end
 	else
 		omode = 1;
-		sosig = 'periodic';
+		sosig = sprintf('periodic (\\mu = %g ms)',1000*mu);
 	end
 else
 	error('Bad onset time specification');
@@ -87,25 +87,21 @@ end
 
 if     strcmpi(dsig,'fixed')
 	dmode = 1;
-	sdsig = 'fixed';
+	sdsig = sprintf('%sfixed (\\mu = %g)',shcycle,1000*ondur);
 elseif isnumeric(dsig) && isscalar(dsig)
 	if dsig > eps
 		dmode  = 2; % Gamma jitter
-		sdsig  = sprintf('\\Gamma jitter (\\sigma = %g ms)',dsig);
+		sdsig  = sprintf('%s\\Gamma(\\mu = %g ms, \\sigma = %g ms)',shcycle,1000*ondur,dsig);
 		dsig   = dsig/1000; % convert from ms to secs
 		dvar   = dsig^2;
 		dalpha = (ondur^2)/dvar;
 		dbeta  = dvar/ondur;
 	else
 		dmode = 1;
-		sdsig = 'fixed';
+		sdsig = sprintf('%sfixed (\\mu = %g)',shcycle,1000*ondur);
 	end
 else
 	error('Bad duration specification');
-end
-
-if nargout > 2
-	descrip = sprintf('cycle onset = %s, cycle "on" duration = %s, %s',sosig,sondur,sdsig);
 end
 
 nev = ceil(1.5*T*F); % number of events (bigger than necessary)
@@ -240,3 +236,7 @@ signal = signal(1:e,:);
 % sort events by time stamp (in case necessary)
 
 signal = sortrows(signal);
+
+if nargout > 2
+	descrip = sprintf('mean strobe frequency = %g Hz (effective frequency = %g Hz)\n\ncycle onset: %s,  cycle "on" duration: %s',F,Fe,sosig,sdsig);
+end

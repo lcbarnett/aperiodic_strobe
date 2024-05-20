@@ -66,9 +66,9 @@ elseif isnumeric(osig) && isscalar(osig)
 		sosig = 'Poisson';
 	elseif osig > eps
 		omode  = 3; % Gamma/Gaussian jitter
-		osig   = osig/1000; % convert from ms to secs
 		if relo
 			sosig  = sprintf('relative with \\Gamma jitter (\\sigma = %g ms)',osig);
+			osig   = osig/1000; % convert from ms to secs
 			ovar   = osig^2;
 			oalpha = (mu^2)/ovar;
 			obeta  = ovar/mu;

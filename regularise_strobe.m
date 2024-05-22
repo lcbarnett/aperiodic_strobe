@@ -16,7 +16,7 @@ function osignal = regularise_strobe(signal,rmode)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 assert(ismatrix(signal) && size(signal,2) == 2,'Bad signal - must be a 2-column matrix');
-assert(isscalar(rmode) && isnumeric(rmode) && any(rmode == 1:4),'Regularisation mode must be an integer 1 - 4');
+assert(isscalar(rmode) && isnumeric(rmode) && any(rmode == 1:4),'Regularisation mode must be an integer in range 1 - 4');
 
 nevents = size(signal,1);
 
@@ -27,7 +27,7 @@ o = 0;
 
 if rmode == 1 % merge/subsume
 
-	while e < nevents-1
+	while e < nevents
 		o = o+1;
 		osignal(o,:) = signal(e,:); % copy event
 		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
@@ -42,9 +42,9 @@ if rmode == 1 % merge/subsume
 		end
 	end
 
-elseif rmode == 2 % truncate
+elseif rmode == 2 % always truncate
 
-	while e < nevents-1
+	while e < nevents
 		o = o+1;
 		osignal(o,:) = signal(e,:); % copy event
 		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
@@ -61,7 +61,7 @@ elseif rmode == 2 % truncate
 
 elseif rmode == 3 % later event ignored
 
-	while e < nevents-1
+	while e < nevents
 		o = o+1;
 		osignal(o,:) = signal(e,:); % copy event
 		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
@@ -74,7 +74,7 @@ elseif rmode == 3 % later event ignored
 
 elseif rmode == 4 % earlier event ignored
 
-	while e < nevents-1
+	while e < nevents
 		o = o+1;
 		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
 			osignal(o,:) = signal(e+1,:); % copy later event
@@ -89,8 +89,10 @@ end
 
 % last event
 
-o = o+1;
-osignal(o,:) = signal(e,:); % copy event
+if e == nevents % in case last event was ignored!
+	o = o+1;
+	osignal(o,:) = signal(nevents,:); % copy event
+end
 
 % truncate signal
 

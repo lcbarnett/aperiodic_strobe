@@ -1,4 +1,4 @@
-function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmode)
+function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmode,seed)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -20,6 +20,9 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmo
 % The parameter rmode specifies how to regularise the signal (deal with overlaps).
 % rmode == 0 (default) means no regularisation. See regularise_strobe.m for details.
 %
+% The parameter seed sets the pseudorandom number generation seed; empty for no
+% seeding (default);
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % F        strobe frequency (Hz)
@@ -28,6 +31,8 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmo
 % relo     relative onset time with Gamma jitter? Else (default) periodic onset time with Gaussian jitter
 % ondur    mean cycle "on" duration: 'hcycle' (default = half-cycle), or length (ms)
 % dsig     "on" duration: 'fixed' (default), or jitter std. dev (ms)
+% rmode    regularisation mode (deal with overlapping flashes), or 0 for no regularisation (default)
+% seed     PRNG seed; empty for no seeding (default)
 %
 % signal   the signal, a 2-column matrix, where the first column contains time stamps
 %          for the cycle onset, and the second column "on time" durations.
@@ -42,6 +47,7 @@ if nargin < 4 || isempty(relo),  relo  =  false;     end
 if nargin < 5 || isempty(ondur), ondur = 'hcycle';   end
 if nargin < 6 || isempty(dsig),  dsig  = 'fixed';    end
 if nargin < 7 || isempty(rmode), rmode =  0;         end
+if nargin < 8, seed = []; end
 
 mu = 1/F;  % mean onset time
 Te = T-mu; % latest possible cycle onset time
@@ -70,14 +76,14 @@ elseif isnumeric(osig) && isscalar(osig)
 		sosig = sprintf('Poisson (\\mu = %g ms)',1000*mu);
 	elseif osig > eps
 		omode  = 3; % Gamma/Gaussian jitter
+		osig = osig/1000; % convert from ms to secs
 		if relo
-			sosig  = sprintf('relative, \\Gamma(\\mu = %g ms, \\sigma = %g ms)',1000*mu,osig);
-			osig   = osig/1000; % convert from ms to secs
+			sosig  = sprintf('relative, \\Gamma(\\mu = %g ms, \\sigma = %g ms)',1000*mu,1000*osig);
 			ovar   = osig^2;
 			oalpha = (mu^2)/ovar;
 			obeta  = ovar/mu;
 		else
-			sosig  = sprintf('periodic, N(\\mu = %g ms, \\sigma = %g ms)',1000*mu,osig);
+			sosig  = sprintf('periodic, N(\\mu = %g ms, \\sigma = %g ms)',1000*mu,1000*osig);
 		end
 	else
 		omode = 1;
@@ -95,8 +101,8 @@ if     strcmpi(dsig,'fixed')
 elseif isnumeric(dsig) && isscalar(dsig)
 	if dsig > eps
 		dmode  = 2; % Gamma jitter
-		sdsig  = sprintf('%s\\Gamma(\\mu = %g ms, \\sigma = %g ms)',shcycle,1000*ondur,dsig);
-		dsig   = dsig/1000; % convert from ms to secs
+		dsig = dsig/1000; % convert from ms to secs
+		sdsig  = sprintf('%s\\Gamma(\\mu = %g ms, \\sigma = %g ms)',shcycle,1000*ondur,1000*dsig);
 		dvar   = dsig^2;
 		dalpha = (ondur^2)/dvar;
 		dbeta  = dvar/ondur;
@@ -111,6 +117,10 @@ end
 nev = ceil(1.5*T*F); % number of events (bigger than necessary)
 
 signal = zeros(nev,2); % column 1 is time stamp, column 2 is duration
+
+if ~isempty(seed)
+	rngstate = rng(seed);
+end
 
 e = 0;
 t = 0;
@@ -231,6 +241,10 @@ case 3 % Jittered onset time
 
 end % switch omode
 
+if ~isempty(seed)
+	rng(rngstate);
+end
+
 % Truncate signal
 
 signal = signal(1:e,:);
@@ -242,7 +256,7 @@ signal = sortrows(signal);
 % Regularise signal (deal with overlaps)
 
 if rmode > 0
-	signal = regularise_strobe(signal,rmode)
+	signal = regularise_strobe(signal,rmode);
 end
 
 % Effective frequency

@@ -1,4 +1,4 @@
-function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig)
+function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmode)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -16,6 +16,9 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig)
 % The parameter ondur sets the cycle "on" duration; by default, ondur is set to half
 % a cycle. The parameter dsig specifies whether the "on" duration is fixed, or Gamma-
 % distributed with mean ondur and standard deviation dsig.
+%
+% The parameter rmode specifies how to regularise the signal (deal with overlaps).
+% rmode == 0 (default) means no regularisation. See regularise_strobe.m for details.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -38,6 +41,7 @@ if nargin < 3 || isempty(osig),  osig  = 'periodic'; end
 if nargin < 4 || isempty(relo),  relo  =  false;     end
 if nargin < 5 || isempty(ondur), ondur = 'hcycle';   end
 if nargin < 6 || isempty(dsig),  dsig  = 'fixed';    end
+if nargin < 7 || isempty(rmode), rmode =  0;         end
 
 mu = 1/F;  % mean onset time
 Te = T-mu; % latest possible cycle onset time
@@ -227,15 +231,23 @@ case 3 % Jittered onset time
 
 end % switch omode
 
-Fe = e/T; % effective frequency
-
-% truncate signal
+% Truncate signal
 
 signal = signal(1:e,:);
 
 % sort events by time stamp (in case necessary)
 
 signal = sortrows(signal);
+
+% Regularise signal (deal with overlaps)
+
+if rmode > 0
+	signal = regularise_strobe(signal,rmode)
+end
+
+% Effective frequency
+
+Fe = size(signal,1)/T;
 
 if nargout > 2
 	descrip = sprintf('mean strobe frequency = %g Hz (effective frequency = %g Hz)\n\ncycle onset: %s,  cycle "on" duration: %s',F,Fe,sosig,sdsig);

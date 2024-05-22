@@ -7,4 +7,5 @@ function signal = offset_strobe(signal,t)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 assert(ismatrix(signal) && size(signal,2) == 2,'Bad signal - must be a 2-column matrix');
+
 signal = [signal(:,1)+t signal(:,2)];

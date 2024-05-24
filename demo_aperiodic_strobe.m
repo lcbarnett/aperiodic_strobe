@@ -3,7 +3,7 @@
 defvar('F',       10      ); % strobe frequency (Hz)
 defvar('T',       10      ); % total time (secs)
 defvar('osig',    50      ); % onset time: 'periodic', 'Poisson', or jitter std. dev (ms)
-defvar('relo',    false   ); % orelative onset time with Gamma jitter? Else (default) periodic onset time with Gaussian jitter
+defvar('relo',    false   ); % relative onset time with Gamma jitter? Else (default) periodic onset time with Gaussian jitter
 defvar('ondur',  'hcycle' ); % cycle "on" duration: 'hcycle' (default = half-cycle), of length (ms)
 defvar('dsig',   'fixed'  ); % on-duration: 'fixed', or jitter std. dev (ms)
 defvar('rmode',   1       ); % "regularisation" mode; deal with flash overlaps (zero for none; see regularise_strobe.m)
@@ -85,9 +85,9 @@ grid on
 
 %%%%%%%%%%%%%%%%%%%%%%% Example run on SCCS strobe device %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% preparedStrobeData1D = prepare_SCCS_strobe_data(samples_p);
+% preparedStrobeData1D = SCCS_strobe_prepare_data(samples_p);
 %
-% success = load_SCCS_device(preparedStrobeData1D,'COM18','apstrobe.txt');
+% success = SCCS_strobe_load_device(preparedStrobeData1D,'COM18','apstrobe.txt');
 %
 % if success, disp('Success!'); end
 %

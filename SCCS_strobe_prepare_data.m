@@ -1,4 +1,4 @@
-function preparedStrobeData1D = prepare_SCCS_strobe_data(sampled_strobe_sequence)
+function preparedStrobeData1D = SCCS_strobe_prepare_data(sampled_strobe_sequence)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

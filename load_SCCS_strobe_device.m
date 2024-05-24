@@ -1,4 +1,4 @@
-function success = load_SCCS_device(preparedStrobeData1D,comPort,filename)
+function success = load_SCCS_strobe_device(preparedStrobeData1D,comPort,filename)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %

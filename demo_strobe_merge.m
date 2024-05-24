@@ -6,7 +6,7 @@ defvar('T1',      15      ); % total time 1 (secs)
 defvar('T2',      10      ); % total time 2 (secs)
 defvar('ondur',  'hcycle' ); % cycle "on" duration: 'hcycle' (default = half-cycle), of length (ms)
 defvar('toffs',  'splice' ); % time offsets: 'splice', 'super' or a 2-vector of time offsets
-defvar('rmode',   0       ); % "regularisation" mode; deal with flash overlaps (zero for none; see regularise_strobe.m)
+defvar('rmode',   1       ); % "regularisation" mode; deal with flash overlaps (zero for none; see regularise_strobe.m)
 defvar('fs',      2000    ); % sampling frequency (Hz)
 defvar('dfac',    5       ); % spectral power display frequency cutoff factor
 

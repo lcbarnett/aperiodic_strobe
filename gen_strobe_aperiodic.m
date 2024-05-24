@@ -46,7 +46,7 @@ if nargin < 3 || isempty(osig),  osig  = 'periodic'; end
 if nargin < 4 || isempty(relo),  relo  =  false;     end
 if nargin < 5 || isempty(ondur), ondur = 'hcycle';   end
 if nargin < 6 || isempty(dsig),  dsig  = 'fixed';    end
-if nargin < 7 || isempty(rmode), rmode =  0;         end
+if nargin < 7 || isempty(rmode), rmode =  1;         end
 if nargin < 8, seed = []; end
 
 mu = 1/F;  % mean onset time

@@ -6,7 +6,7 @@ defvar('osig',    50      ); % onset time: 'periodic', 'Poisson', or jitter std.
 defvar('relo',    false   ); % orelative onset time with Gamma jitter? Else (default) periodic onset time with Gaussian jitter
 defvar('ondur',  'hcycle' ); % cycle "on" duration: 'hcycle' (default = half-cycle), of length (ms)
 defvar('dsig',   'fixed'  ); % on-duration: 'fixed', or jitter std. dev (ms)
-defvar('rmode',   0       ); % "regularisation" mode; deal with flash overlaps (zero for none; see regularise_strobe.m)
+defvar('rmode',   1       ); % "regularisation" mode; deal with flash overlaps (zero for none; see regularise_strobe.m)
 defvar('fs',      2000    ); % sampling frequency (Hz)
 defvar('dfac',    5       ); % spectral power display frequency cutoff factor
 defvar('seed',    []      ); % random seed (empty for no seed)

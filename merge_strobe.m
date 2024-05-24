@@ -11,7 +11,7 @@ function [signal,T,Fe] = merge_strobe(signals,Ts,toffs,rmode)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin < 4 || isempty(rmode), rmode =  0; end
+if nargin < 4 || isempty(rmode), rmode =  1; end
 
 assert(iscell(signals) && isvector(signals),'Please supply a cell vector of strobe sequences');
 nsignals = length(signals);

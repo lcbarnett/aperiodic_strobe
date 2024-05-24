@@ -82,3 +82,13 @@ xline(Fe,'r');
 legend({'periodic','aperiodic'})
 set(gca,'TickLength',[0,0]);
 grid on
+
+%%%%%%%%%%%%%%%%%%%%%%% Example run on SCCS strobe device %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% preparedStrobeData1D = prepare_SCCS_strobe_data(samples_p);
+%
+% success = load_SCCS_device(preparedStrobeData1D,'COM18','apstrobe.txt');
+%
+% if success, disp('Success!'); end
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

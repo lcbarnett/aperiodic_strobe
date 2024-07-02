@@ -1,3 +1,10 @@
-function value = binary8ToUint8(bitArray)
-    value = sum([2^7 2^6, 2^5, 2^4, 2^3, 2^2, 2^1, 2^0] .* bitArray, 2);
-end
+function signal = offset_strobe(signal,t)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This function offsets the strobe sequence 'signal' by time t
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+assert(ismatrix(signal) && size(signal,2) == 2,'Bad signal - must be a 2-column matrix');
+signal = [signal(:,1)+t signal(:,2)];

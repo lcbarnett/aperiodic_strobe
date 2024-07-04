@@ -8,10 +8,13 @@ function osignal = regularise_strobe(signal,rmode)
 %
 % Overlapping flashes are dealt with sequentially as follows:
 %
-% rmode == 1 : merge/subsume
-% rmode == 2 : always truncate
+% rmode == 1 : merge
+% rmode == 2 : truncate
 % rmode == 3 : ignore later flash
 % rmode == 4 : ignore earlier flash.
+%
+% Flashes are processed sequentially in time. Note that modes 3 and 4 preserve flash
+% "on" durations; modes 1 and 2 may not.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

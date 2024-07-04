@@ -2,9 +2,11 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmo
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% This function generates a square-wave signal with average frequency F over a time
-% segment of length T, where the phase (cycle onset time) and cycle "on" duration can
-% be fixed or variable.
+% This function generates a strobe sequence ("signal") with average frequency F over
+% a time segment of length T, where the phase (cycle onset time) and cycle "on"
+% duration can be fixed or variable. A signal is a 2-column matrix. The first column
+% contains flash onset time stamps (these should be sorted-ascending), the second
+% column flash durations.
 %
 % The parameters osig and relo specify the onset time of the next cycle. This may be
 % periodic with frequency F, a Poisson process with mean equal to one cycle (cycle
@@ -245,21 +247,21 @@ if ~isempty(seed)
 	rng(rngstate);
 end
 
-% Truncate signal
+% Truncate signal to actual number of events
 
 signal = signal(1:e,:);
 
-% sort events by time stamp (in case necessary)
+% Sort events by time stamp (in case necessary)
 
 signal = sortrows(signal);
 
-% Regularise signal (deal with overlaps)
+% Regularise signal (deal with flash overlaps)
 
 if rmode > 0
 	signal = regularise_strobe(signal,rmode);
 end
 
-% Effective frequency
+% Effective frequency (flashes per total time duration)
 
 Fe = size(signal,1)/T;
 

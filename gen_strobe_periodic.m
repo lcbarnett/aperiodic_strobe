@@ -2,9 +2,11 @@ function signal = gen_strobe_periodic(F,T,ondur)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% This function generates a square-wave signal with frequency F over a time segment of
-% length T. The parameter ondur sets the cycle "on" duration; by default, ondur is set
-% to half a cycle (cycle length is 1/F).
+% This function generates a periodic strobe sequence ("signal") with frequency F over
+% a time segment of length T. The parameter ondur sets the cycle "on" duration; by
+% default, ondur is set to half a cycle (cycle length is 1/F). A signal is a 2-column
+% matrix. The first column contains flash onset time stamps (these should be sorted-
+% ascending), the second column flash durations.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PARAMETERS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -45,8 +47,10 @@ while true
 	t = t+mu;
 end
 
-Fe = e/T; % effective frequency
-
-% truncate
+% Truncate signal to actual number of events
 
 signal = signal(1:e,:);
+
+% Effective frequency (flashes per total time duration)
+
+Fe = e/T;

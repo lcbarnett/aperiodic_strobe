@@ -10,7 +10,7 @@ function osignal = regularise_strobe(signal,rmode)
 %
 % rmode == 1 : merge
 % rmode == 2 : truncate
-% rmode == 3 : ignore later flash
+% rmode == 3 : ignore later flash (recommended)
 % rmode == 4 : ignore earlier flash.
 %
 % Flashes are processed sequentially in time. Note that modes 3 and 4 preserve flash
@@ -28,75 +28,86 @@ osignal = zeros(nevents,2);
 e = 1;
 o = 0;
 
-if rmode == 1 % merge/subsume
+switch rmode
 
-	while e < nevents
-		o = o+1;
-		osignal(o,:) = signal(e,:); % copy event
-		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
-			if signal(e+1,1) + signal(e+1,2) <= signal(e,1)+signal(e,2) % contained
-				% do nothing (just ignore event e+1)
-			else                                                        % overlap
-				osignal(o,2) = signal(e+1,1) - signal(e,1) + signal(e+1,2);
+	case 1 % merge/subsume overlapping events
+
+		while e < nevents
+			to = signal(e,1)+signal(e,2); % off time
+			o = o+1;
+			osignal(o,1) = signal(e,1); % copy event start time
+			% skip subsequent overlapping events and save latest off time
+			e = e+1;
+			while e <= nevents && signal(e,1) <= to % overlap
+				to1 = signal(e,1)+signal(e,2); % off time
+				if to1 > to, to = to1; end     % update off time
+				e = e+1; % next event
 			end
-			e = e+2; % skip past event e+1
-		else % no clash
-			e = e+1;
+			osignal(o,2) = to-osignal(o,1); % new duration
 		end
-	end
+		if e == nevents % in case last event was ignored!
+			o = o+1;
+			osignal(o,:) = signal(nevents,:); % copy event
+		end
 
-elseif rmode == 2 % always truncate
+	case 2 % truncate overlapping events
 
-	while e < nevents
-		o = o+1;
-		osignal(o,:) = signal(e,:); % copy event
-		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
-			if signal(e+1,1) + signal(e+1,2) <= signal(e,1)+signal(e,2) % contained
-				osignal(o,2) = signal(e+1,1) - signal(e,1) + signal(e+1,2);
-			else                                                        % overlap
-				% do nothing (just ignore event e+1)
+		while e < nevents
+			to = signal(e,1)+signal(e,2); % off time
+			o = o+1;
+			osignal(o,1) = signal(e,1); % copy event start time
+			% skip subsequent overlapping events and save earliest off time
+			e = e+1;
+			while e <= nevents && signal(e,1) <= to % overlap
+				to1 = signal(e,1)+signal(e,2); % off time
+				if to1 < to, to = to1; end     % update off time
+				e = e+1; % next event
 			end
-			e = e+2; % skip past event e+1
-		else % no clash
-			e = e+1;
+			osignal(o,2) = to-osignal(o,1); % new duration
 		end
-	end
+		if e == nevents % in case last event was ignored!
+			o = o+1;
+			osignal(o,:) = signal(nevents,:); % copy event
+		end
 
-elseif rmode == 3 % later event ignored
+	case 3 % later overlapping events ignored
 
-	while e < nevents
+		while e < nevents
+			to = signal(e,1)+signal(e,2); % off time
+			o = o+1;
+			osignal(o,:) = signal(e,:);   % copy event
+			% skip subsequent overlapping events
+			e = e+1;
+			while e <= nevents && signal(e,1) <= to % overlap
+				e = e+1; % skip event
+			end
+		end
+		if e == nevents % in case last event was ignored!
+			o = o+1;
+			osignal(o,:) = signal(nevents,:); % copy event
+		end
+
+	case 4 % earlier overlapping events ignored
+
+		to = signal(e,1)+signal(e,2); % off time
+		while e <= nevents && signal(e,1) <= to % overlap
+			e = e+1; % skip event
+		end
 		o = o+1;
-		osignal(o,:) = signal(e,:); % copy event
-		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
-			% do nothing (just ignore event e+1)
-			e = e+2; % skip past event e+1
-		else % no clash
+		osignal(o,:) = signal(e,:);  % copy event
+		while e < nevents
+			to = signal(e,1)+signal(e,2); % off time
+			% skip to last overlapping event
 			e = e+1;
+			while e <= nevents && signal(e,1) <= to % overlap
+				e = e+1; % skip event
+			end
+			o = o+1;
+			osignal(o,:) = signal(e,:);  % copy event
 		end
-	end
 
-elseif rmode == 4 % earlier event ignored
+end % switch
 
-	while e < nevents
-		o = o+1;
-		if signal(e+1,1) <= signal(e,1)+signal(e,2) % clash
-			osignal(o,:) = signal(e+1,:); % copy later event
-			e = e+2; % skip past event e+1
-		else % no clash
-			osignal(o,:) = signal(e,:); % copy event
-			e = e+1;
-		end
-	end
-
-end
-
-% last event
-
-if e == nevents % in case last event was ignored!
-	o = o+1;
-	osignal(o,:) = signal(nevents,:); % copy event
-end
-
-% truncate signal
+% truncate signal as appropriate
 
 osignal = osignal(1:o,:);

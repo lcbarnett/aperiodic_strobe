@@ -1,4 +1,4 @@
-function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmode,seed)
+function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmode,mifd,seed)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -35,6 +35,7 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmo
 % ondur    mean cycle "on" duration: 'hcycle' (default = half-cycle), or length (ms)
 % dsig     "on" duration: 'fixed' (default), or jitter std. dev (ms)
 % rmode    regularisation mode (deal with overlapping flashes): 1 - 4 (default is 3 = ignore later overlapping flashes)
+% mifd     minimum inter-flash duration in seconds; set to something like 10/fs
 % seed     PRNG seed; empty for no seeding (default)
 %
 % signal   the signal, a 2-column matrix, where the first column contains time stamps
@@ -50,7 +51,8 @@ if nargin < 4 || isempty(relo),  relo  =  false;     end
 if nargin < 5 || isempty(ondur), ondur = 'hcycle';   end
 if nargin < 6 || isempty(dsig),  dsig  = 'fixed';    end
 if nargin < 7 || isempty(rmode), rmode =  3;         end % 3 = ignore later overlapping flashes (recommended)
-if nargin < 8, seed = []; end
+if nargin < 8  mifd = []; end % to use regularise_strobe() default
+if nargin < 9, seed = []; end
 
 mu = 1/F;  % mean onset time
 Te = T-mu; % latest possible cycle onset time
@@ -258,7 +260,7 @@ signal = sortrows(signal);
 
 % Regularise signal (deal with flash overlaps)
 
-signal = regularise_strobe(signal,rmode);
+signal = regularise_strobe(signal,rmode,mifd);
 
 % Effective frequency (flashes per total time duration)
 

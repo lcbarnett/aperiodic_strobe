@@ -35,7 +35,7 @@ function [signal,Fe,descrip] = gen_strobe_aperiodic(F,T,osig,relo,ondur,dsig,rmo
 % ondur    mean cycle "on" duration: 'hcycle' (default = half-cycle), or length (ms)
 % dsig     "on" duration: 'fixed' (default), or jitter std. dev (ms)
 % rmode    regularisation mode (deal with overlapping flashes): 1 - 4 (default is 3 = ignore later overlapping flashes)
-% mifd     minimum inter-flash duration in seconds; set to something like 10/fs
+% mifd     minimum inter-flash duration in seconds; set to something like 25ms
 % seed     PRNG seed; empty for no seeding (default)
 %
 % signal   the signal, a 2-column matrix, where the first column contains time stamps

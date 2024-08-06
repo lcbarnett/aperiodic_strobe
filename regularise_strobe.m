@@ -13,8 +13,7 @@ function osignal = regularise_strobe(signal,rmode,mifd)
 % rmode == 3 : ignore later flash (recommended)
 % rmode == 4 : ignore earlier flash.
 %
-% mifd is the minimum inter-flash duration in seconds; set to something like 10/fs,
-% where fs is sampling frequency in Hz.
+% mifd is the minimum inter-flash duration in seconds (maybe 25ms?)
 %
 % Flashes are processed sequentially in time. Note that modes 3 and 4 preserve flash
 % "on" durations; modes 1 and 2 may not.
@@ -24,7 +23,7 @@ function osignal = regularise_strobe(signal,rmode,mifd)
 assert(ismatrix(signal) && size(signal,2) == 2,'Bad signal - must be a 2-column matrix');
 assert(isscalar(rmode) && isnumeric(rmode) && any(rmode == 1:4),'Regularisation mode must be an integer in range 1 - 4');
 
-if nargin < 3 || isempty(mifd), mifd = 0.005; end % set to something like 10/fs
+if nargin < 3 || isempty(mifd), mifd = 0.025; end
 
 nevents = size(signal,1);
 

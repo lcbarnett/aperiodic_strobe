@@ -35,7 +35,7 @@ o = 0;
 
 switch rmode
 
-	case 1 % merge/subsume overlapping events
+	case 1 % merge/subsume overlapping events [FIX ME]
 
 		while e < nevents
 			to = signal(e,1)+signal(e,2) + mifd; % off time + minimum inter-flash gap
@@ -44,7 +44,7 @@ switch rmode
 			% skip subsequent overlapping events and save latest off time
 			e = e+1;
 			while e <= nevents && signal(e,1) <= to % overlap
-				to1 = signal(e,1)+signal(e,2); % off time
+				to1 = signal(e,1)+signal(e,2) + mifd; % off time + minimum inter-flash gap
 				if to1 > to, to = to1; end     % update off time
 				e = e+1; % next event
 			end
@@ -55,16 +55,16 @@ switch rmode
 			osignal(o,:) = signal(nevents,:); % copy event
 		end
 
-	case 2 % truncate overlapping events
+	case 2 % truncate overlapping events [FIX ME]
 
 		while e < nevents
-			to = signal(e,1)+signal(e,2); % off time
+			to = signal(e,1)+signal(e,2) + mifd; % off time + minimum inter-flash gap
 			o = o+1;
 			osignal(o,1) = signal(e,1); % copy event start time
 			% skip subsequent overlapping events and save earliest off time
 			e = e+1;
 			while e <= nevents && signal(e,1) <= to % overlap
-				to1 = signal(e,1)+signal(e,2); % off time
+				to1 = signal(e,1)+signal(e,2) + mifd; % off time + minimum inter-flash gap
 				if to1 < to, to = to1; end     % update off time
 				e = e+1; % next event
 			end
